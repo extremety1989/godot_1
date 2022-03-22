@@ -1,0 +1,71 @@
+[gd_resource type="AnimationNodeBlendTree" load_steps=12 format=2]
+
+[sub_resource type="AnimationNodeAnimation" id=1]
+animation = "down"
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "idle"
+
+[sub_resource type="AnimationNodeAnimation" id=8]
+animation = "mone_forward"
+
+[sub_resource type="AnimationNodeAnimation" id=9]
+animation = "move_backward"
+
+[sub_resource type="AnimationNodeAnimation" id=10]
+animation = "move_left"
+
+[sub_resource type="AnimationNodeAnimation" id=11]
+animation = "move_right"
+
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "run_forward"
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "up"
+
+[sub_resource type="AnimationNodeBlend3" id=6]
+
+[sub_resource type="AnimationNodeBlend2" id=5]
+filter_enabled = true
+filters = [ "Armature/Skeleton:feet1.l", "Armature/Skeleton:feet1.r", "Armature/Skeleton:feet2.l", "Armature/Skeleton:feet2.r", "Armature/Skeleton:lower_leg.l", "Armature/Skeleton:lower_leg.r", "Armature/Skeleton:upper_leg.l", "Armature/Skeleton:upper_leg.r" ]
+
+[sub_resource type="AnimationNodeTransition" id=13]
+input_count = 5
+input_0/name = "move_forward"
+input_0/auto_advance = false
+input_1/name = "move_backward"
+input_1/auto_advance = false
+input_2/name = "left"
+input_2/auto_advance = false
+input_3/name = "right"
+input_3/auto_advance = false
+input_4/name = "run"
+input_4/auto_advance = false
+
+[resource]
+graph_offset = Vector2( -399.666, 47.75 )
+nodes/Animation/node = SubResource( 4 )
+nodes/Animation/position = Vector2( -200, -80 )
+"nodes/Animation 2/node" = SubResource( 1 )
+"nodes/Animation 2/position" = Vector2( -200, 160 )
+"nodes/Animation 3/node" = SubResource( 2 )
+"nodes/Animation 3/position" = Vector2( -200, 40 )
+"nodes/Animation 4/node" = SubResource( 8 )
+"nodes/Animation 4/position" = Vector2( -200, 260 )
+"nodes/Animation 5/node" = SubResource( 9 )
+"nodes/Animation 5/position" = Vector2( -200, 360 )
+"nodes/Animation 6/node" = SubResource( 10 )
+"nodes/Animation 6/position" = Vector2( -200, 460 )
+"nodes/Animation 7/node" = SubResource( 11 )
+"nodes/Animation 7/position" = Vector2( -200, 560 )
+"nodes/Animation 8/node" = SubResource( 12 )
+"nodes/Animation 8/position" = Vector2( -200, 660 )
+nodes/Blend3/node = SubResource( 6 )
+nodes/Blend3/position = Vector2( 40, 0 )
+nodes/Movemnt/node = SubResource( 5 )
+nodes/Movemnt/position = Vector2( 300, 100 )
+nodes/Transition/node = SubResource( 13 )
+nodes/Transition/position = Vector2( 80, 280 )
+nodes/output/position = Vector2( 500, 120 )
+node_connections = [ "output", 0, "Movemnt", "Blend3", 0, "Animation", "Blend3", 1, "Animation 3", "Blend3", 2, "Animation 2", "Transition", 0, "Animation 4", "Transition", 1, "Animation 5", "Transition", 2, "Animation 6", "Transition", 3, "Animation 7", "Transition", 4, "Animation 8", "Movemnt", 0, "Blend3", "Movemnt", 1, "Transition" ]
