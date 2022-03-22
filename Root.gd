@@ -827,7 +827,7 @@ func _process(_delta):
 
 
 func _notification(what):
-	print("ok")
+	print("ok") 
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		if JOINED_SERVER != 999:
 			test.put_u8(JOINED_SERVER)#code is now server_id
