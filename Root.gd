@@ -43,39 +43,11 @@ onready var keys = {
 	16777234: "Down Arrow"
 }
 export onready var data_to_save = {
-	"forward": 90,
-	"backward": 83,
-	"left": 81,
-	"right": 68,
-	"jump": 32,
-	"fire": 1,
-	"aim": 2,
-	"fast_motion": 16777237,
-	"drop": 71,
-	"pick": 70,
-	"use": 69,
-	"next_weapon":16777233,
-	"previous_weapon":16777231,
-	"chat":89,
 	"mouse_sensitivity": $Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value,
 }
 onready var default_data_to_save = {	
-	"forward": 90,
-	"backward": 83,
-	"left": 81,
-	"right": 68,
-	"jump": 32,
-	"fire": 1,
-	"aim": 2,
-	"fast_motion": 16777237,
-	"drop": 71,
-	"pick": 70,
-	"use": 69,
-	"next_weapon":16777233,
-	"previous_weapon":16777231,
-	"chat":89,
-	"mouse_sensitivity": 0.01,
-	}
+	  "mouse_sensitivity": 0.01,
+}
 export var inputs = {	
 	"forward": false,
 	"backward": false,
@@ -139,26 +111,26 @@ func _input(event):
 		if event is InputEventMouseMotion:
 			inputs["mouse_sensitivity"] = data_to_save["mouse_sensitivity"]
 		if event is InputEventMouseButton and JOINED_SERVER !=999 and get_node_or_null("Team_A/"+str(my_username.text)) or get_node_or_null("Team_B/"+str(my_username.text)):
-			if event.button_index == data_to_save["fire"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 1 and event.pressed  and not $Main/chat_input.visible:
 				inputs["fire"] = true
-			elif event.button_index == data_to_save["fire"] and not event.pressed  and not $Main/chat_input.visible:
+			elif event.button_index == 1 and not event.pressed  and not $Main/chat_input.visible:
 				inputs["fire"] = false
-			if event.button_index == data_to_save["aim"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 2 and event.pressed  and not $Main/chat_input.visible:
 				if not inputs["aim"]:
 					inputs["aim"] = true
 				else:
 					inputs["aim"] = false
-			if event.button_index == data_to_save["next_weapon"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 16777233 and event.pressed  and not $Main/chat_input.visible:
 					inputs["next_weapon"] = true
-			if event.button_index == data_to_save["previous_weapon"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 16777231 and event.pressed  and not $Main/chat_input.visible:
 					inputs["previous_weapon"] = true
-			if event.button_index == data_to_save["use"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 69 and event.pressed  and not $Main/chat_input.visible:
 					inputs["use"] = true
-			if event.button_index == data_to_save["drop"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 71 and event.pressed  and not $Main/chat_input.visible:
 					inputs["drop"] = true
-			if event.button_index == data_to_save["fast_motion"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 16777237 and event.pressed  and not $Main/chat_input.visible:
 					inputs["fast_motion"] = true
-			if event.button_index == data_to_save["jump"] and event.pressed  and not $Main/chat_input.visible:
+			if event.button_index == 32 and event.pressed  and not $Main/chat_input.visible:
 					inputs["jump"] = true
 
 		if event is InputEventKey:
@@ -195,61 +167,61 @@ func _input(event):
 						Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				if $Main/chat_input.visible:
 					$Main/chat_input/HBoxContainer/LineEdit.grab_focus()
-				if event.scancode == data_to_save["fire"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 1 and event.pressed  and not $Main/chat_input.visible:
 					inputs["fire"] = true
-				if event.scancode == data_to_save["aim"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 2 and event.pressed  and not $Main/chat_input.visible:
 					if not inputs["aim"]:
 						inputs["aim"] = true
 					else:
 						inputs["aim"] = false
-				if event.scancode == data_to_save["next_weapon"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 16777233 and event.pressed  and not $Main/chat_input.visible:
 						inputs["next_weapon"] = true
-				elif event.scancode == data_to_save["next_weapon"] and not event.pressed  and not $Main/chat_input.visible:
+				elif event.scancode == 16777233 and not event.pressed  and not $Main/chat_input.visible:
 						inputs["next_weapon"] = false
-				if event.scancode == data_to_save["previous_weapon"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 16777231 and event.pressed  and not $Main/chat_input.visible:
 						inputs["previous_weapon"] = true
-				elif event.scancode == data_to_save["previous_weapon"] and not event.pressed  and not $Main/chat_input.visible:
+				elif event.scancode == 16777231 and not event.pressed  and not $Main/chat_input.visible:
 						inputs["previous_weapon"] = false
-				if event.scancode == data_to_save["use"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 69 and event.pressed  and not $Main/chat_input.visible:
 						inputs["use"] = true
-				elif event.scancode == data_to_save["use"] and not event.pressed  and not $Main/chat_input.visible:
+				elif event.scancode == 69 and not event.pressed  and not $Main/chat_input.visible:
 						inputs["drop"] = true
-				if event.scancode == data_to_save["drop"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 71 and event.pressed  and not $Main/chat_input.visible:
 						inputs["drop"] = true
-				elif event.scancode == data_to_save["drop"] and not event.pressed  and not $Main/chat_input.visible:
+				elif event.scancode == 71 and not event.pressed  and not $Main/chat_input.visible:
 						inputs["drop"] = false
-				if event.scancode == data_to_save["fast_motion"] and event.pressed  and not $Main/chat_input.visible:
+				if event.scancode == 16777237 and event.pressed  and not $Main/chat_input.visible:
 						inputs["fast_motion"] = true
-				elif event.scancode == data_to_save["fast_motion"] and not event.pressed  and not $Main/chat_input.visible:
+				elif event.scancode == 16777237 and not event.pressed  and not $Main/chat_input.visible:
 						inputs["fast_motion"] = false
 
-				if event.pressed and event.scancode == data_to_save["jump"]  and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 32  and not $Main/chat_input.visible:
 						inputs["jump"] = true
-				elif not event.pressed and event.scancode == data_to_save["jump"]  and not $Main/chat_input.visible:
+				elif not event.pressed and event.scancode == 32  and not $Main/chat_input.visible:
 						inputs["jump"] = false
-				if spectator_username != "" and event.pressed and event.scancode == data_to_save["jump"] and not get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)):
+				if spectator_username != "" and event.pressed and event.scancode == 32 and not get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)):
 						for name in NAMES:
 							if name != my_username.text and name != spectator_username:
 								spectator_username = str(name)
 								break
 
-				if event.pressed and event.scancode == data_to_save["forward"] and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 90 and not $Main/chat_input.visible:
 						inputs["forward"] = true
-				elif not event.pressed and event.scancode == data_to_save["forward"]  and not $Main/chat_input.visible:
+				elif not event.pressed and event.scancode == 90  and not $Main/chat_input.visible:
 						inputs["forward"] = false
-				if event.pressed and event.scancode == data_to_save["backward"]  and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 83  and not $Main/chat_input.visible:
 						inputs["backward"] = true
-				elif not event.pressed and event.scancode == data_to_save["backward"]  and not $Main/chat_input.visible:
+				elif not event.pressed and event.scancode == 83  and not $Main/chat_input.visible:
 						inputs["backward"] = false
-				if event.pressed and event.scancode == data_to_save["left"]  and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 81  and not $Main/chat_input.visible:
 						inputs["left"] = true
-				elif not event.pressed and event.scancode == data_to_save["left"]  and not $Main/chat_input.visible:
+				elif not event.pressed and event.scancode == 81  and not $Main/chat_input.visible:
 						inputs["left"] = false
-				if event.pressed and event.scancode == data_to_save["right"] and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 68 and not $Main/chat_input.visible:
 						inputs["right"] = true
-				elif not event.pressed and event.scancode == data_to_save["right"]  and not $Main/chat_input.visible:
+				elif not event.pressed and event.scancode == 68  and not $Main/chat_input.visible:
 						inputs["right"] = false
-				if event.pressed and event.scancode == data_to_save["chat"] and not $Main/chat_input.visible:
+				if event.pressed and event.scancode == 89 and not $Main/chat_input.visible:
 					$Main/chat_input.visible = true		
 					$Main/chat_input/HBoxContainer/Label.text = my_username.text + ":"
 				elif event.pressed and  event.scancode == 16777221  and $Main/chat_input.visible:
@@ -273,19 +245,6 @@ func _ready():
 		file.open("user://saved_settings.json", File.READ)
 		var content = file.get_var()
 		if content:
-			$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.text = str(keys[content["chat"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.text = str(keys[content["previous_weapon"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.text = str(keys[content["next_weapon"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.text = str(keys[content["use"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.text = str(keys[content["drop"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.text = str(keys[content["fast_motion"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.text = str(keys[content["aim"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.text = str(keys[content["fire"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.text = str(keys[content["jump"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.text = str(keys[content["right"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.text = str(keys[content["left"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.text = str(keys[content["backward"]]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.text = str(keys[content["forward"]]).to_upper() 
 			$Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value = content["mouse_sensitivity"]
 			data_to_save = content
 		else:
@@ -303,7 +262,6 @@ func _closed(was_clean = false):
 	$Main/start_menu.visible = true
 	$Main/chat_box.visible = false
 	$Main/chat_input.visible = false
-	$Main/server_menu.visible = false
 
 func _connected(proto):
 	print("conected ",proto)
@@ -434,12 +392,12 @@ func _on_data():
 								else:
 									var other = null
 									if user_name == my_username.text:
-										other = load("res://simple_a.tscn").instance()
+										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
 										$smooth_camera.target = other.get_node_or_null("camera_root").get_node_or_null("Position3D")
 									else:
-										other = load("res://simple_a.tscn").instance()
+										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Other.gd"))
 										var node = get_node_or_null("Main/chat_box/RichTextLabel")
@@ -532,12 +490,12 @@ func _on_data():
 								else:
 									var other = null
 									if user_name == my_username.text:
-										other = load("res://simple_a.tscn").instance()
+										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
 										$smooth_camera.target = other.get_node_or_null("camera_root").get_node_or_null("Position3D")
 									else:
-										other = load("res://simple_a.tscn").instance()
+										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Other.gd"))
 										var node = get_node_or_null("Main/chat_box/RichTextLabel")
@@ -902,183 +860,14 @@ func mute_player_select(player,second):
 			$Main/muted_players_menu/VBoxContainer/HBoxContainer3/ScrollContainer/ItemList.add_item(str(i)+" "+str(NAMES[i]))
 	second.release_focus()
 	
-func _on_forward_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["forward"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["forward"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.release_focus()
 
-func _on_backward_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["backward"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["backward"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.release_focus()
-
-func _on_left_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["left"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["left"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.release_focus()
-
-
-func _on_right_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["right"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["right"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.release_focus()
-
-func _on_jump_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["jump"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["jump"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.release_focus()
-
-func _on_fire_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["fire"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["fire"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.release_focus()
-
-
-func _on_aim_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["aim"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["aim"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.release_focus()
-		
-func _on_fast_motion_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["fast_motion"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["fast_motion"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.release_focus()
-
-
-func _on_drop_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["drop"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["drop"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.release_focus()
-
-func _on_use_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.grab_focus()
-	if event is InputEventKey: 
-		if event.scancode in keys:
-			data_to_save["use"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["use"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.release_focus()
-	
-func _on_next_weapon_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.grab_focus()
-	if event is InputEventKey:
-		if event.scancode in keys:
-			data_to_save["next_weapon"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["next_weapon"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.release_focus()
-
-func _on_previous_weapon_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.grab_focus()
-	if event is InputEventKey:
-		if event.scancode in keys:
-			data_to_save["previous_weapon"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["previous"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.release_focus()
-
-func _on_chat_gui_input(event):
-	$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.grab_focus()
-	if event is InputEventKey:
-		if event.scancode in keys:
-			data_to_save["chat"] = event.scancode
-			$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.text = str(keys[event.scancode]).to_upper() 
-			$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.release_focus()
-	if event is InputEventMouseButton and event.button_index in keys:
-		data_to_save["chat"] = event.button_index
-		$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.text = str(keys[event.button_index]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.release_focus()
-
-		
-		
 func _on_reset_pressed():
 		reset_data_to_save = default_data_to_save
-		$Main/game_settings/VBoxContainer/VBoxContainer17/HBoxContainer/chat.text = str(keys[default_data_to_save["chat"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer16/HBoxContainer/previous_weapon.text = str(keys[default_data_to_save["previous_weapon"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer15/HBoxContainer/next_weapon.text = str(keys[default_data_to_save["next_weapon"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer14/HBoxContainer/use.text = str(keys[default_data_to_save["use"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer13/HBoxContainer/drop.text = str(keys[default_data_to_save["drop"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer12/HBoxContainer/fast_motion.text = str(keys[default_data_to_save["fast_motion"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer11/HBoxContainer/aim.text = str(keys[default_data_to_save["aim"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer10/HBoxContainer/fire.text = str(keys[default_data_to_save["fire"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer9/HBoxContainer/jump.text = str(keys[default_data_to_save["jump"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer8/HBoxContainer/right.text = str(keys[default_data_to_save["right"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer7/HBoxContainer/left.text = str(keys[default_data_to_save["left"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer6/HBoxContainer/backward.text = str(keys[default_data_to_save["backward"]]).to_upper() 
-		$Main/game_settings/VBoxContainer/VBoxContainer5/HBoxContainer/forward.text = str(keys[default_data_to_save["forward"]]).to_upper() 
 		$Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value = default_data_to_save["mouse_sensitivity"]
+	
+func _on_open_settings_pressed():
+	$Main/in_game_menu.hide()
+	$Main/game_settings.show()
 	
 func _on_return_pressed():
 	reset_data_to_save = null
@@ -1087,11 +876,7 @@ func _on_return_pressed():
 		$Main/in_game_menu.show()
 	else:
 		$Main/start_menu.show()
-
-
-func _on_open_settings_pressed():
-	$Main/start_menu.hide()
-	$Main/game_settings.show()
+		$Main/server_menu.hide()
 
 
 func _on_save_pressed():

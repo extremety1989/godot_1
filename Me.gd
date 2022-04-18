@@ -33,7 +33,7 @@ var look_y = Vector3()
 var local_gravity = Vector3()
 
 onready var pivot = get_node("camera_root")
-onready var animation = get_node("AnimationTree")
+
 func reload_keys():
 	inputs = get_parent().get_parent().inputs
 	
@@ -51,7 +51,6 @@ func _input(event):
 #		animation.set("parameters/look_angle", look_y)
 	
 func _ready():
-	print(animation)
 	health = 100
 	global_transform.origin = Vector3(0,10,0)
 	if inputs == null:
@@ -71,9 +70,9 @@ func _physics_process(delta):
 		if inputs["forward"]:
 			direction -= heading.z
 			if inputs["fast_motion"] and not inputs["fire"]:
-				animation["parameters/movemnt"].travel("run_forward")
+				print("run_forward")
 			else:
-				animation["parameters/movemnt"].travel("mone_forward")
+				print("move forward")
 		elif inputs["backward"]:
 			direction += heading.z
 	
