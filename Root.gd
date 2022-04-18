@@ -248,10 +248,11 @@ func _ready():
 			$Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value = content["mouse_sensitivity"]
 			data_to_save = content
 		else:
-			data_to_save = data_to_save
+			data_to_save = default_data_to_save
 	else:
 		file.open("user://saved_settings.json", File.WRITE)
 		data_to_save = default_data_to_save
+		file.store_var(data_to_save)
 	file.close()
 
 func _closed(was_clean = false):
@@ -819,6 +820,7 @@ func _on_submit_pressed():
 	
 func _on_exit_pressed():
 	_client.disconnect_from_host()
+	$Main/server_menu.show()
 
 func _on_join_pressed():
 	test = StreamPeerBuffer.new()

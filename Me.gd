@@ -61,18 +61,20 @@ func _ready():
 func _physics_process(delta):
 	if health < 0:
 		queue_free()
+		$smooth_camera.queue_free()
 		set_process(false)
 	else:
 		var heading = pivot.global_transform.basis
 		var direction = Vector3.ZERO
 		if inputs["fire"]:
 			pass
+		print(heading)
 		if inputs["forward"]:
 			direction -= heading.z
 			if inputs["fast_motion"] and not inputs["fire"]:
-				print("run_forward")
+				pass
 			else:
-				print("move forward")
+				pass
 		elif inputs["backward"]:
 			direction += heading.z
 	
@@ -81,7 +83,7 @@ func _physics_process(delta):
 		elif inputs["right"]:
 			direction += heading.x
 		if inputs["jump"] and is_on_floor():
-			local_gravity = Vector3.UP * 3.0
+			local_gravity = Vector3.UP * 30.0
 		if inputs["jump"]:
 			inputs["jump"] = false
 
@@ -89,6 +91,7 @@ func _physics_process(delta):
 			local_gravity.y -= 9.8  * delta
 		elif is_on_floor():
 			local_gravity = Vector3.ZERO
+			
 		direction = direction.normalized()
 		if direction.z == 0 and direction.x == 0:
 			pass

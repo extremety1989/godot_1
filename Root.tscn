@@ -2,7 +2,6 @@
 
 [ext_resource path="res://Root.gd" type="Script" id=1]
 [ext_resource path="res://mouse_sensitivity.gd" type="Script" id=2]
-[ext_resource path="res://smooth_camera.gd" type="Script" id=3]
 
 [sub_resource type="Theme" id=3]
 
@@ -183,6 +182,44 @@ size = Vector3( 100, 1, 100 )
 
 [sub_resource type="BoxShape" id=30]
 extents = Vector3( 50, 0.5, 50 )
+
+[sub_resource type="GDScript" id=67]
+script/source = "extends Spatial
+export (NodePath) var follow_target = null
+
+var target: Spatial
+var update = false
+var gt_prev: Transform
+var gt_current: Transform
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	set_as_toplevel(true)
+	target = get_node_or_null(follow_target)
+	if target == null:
+		target = get_parent()
+	global_transform = target.global_transform
+	gt_prev = target.global_transform
+	gt_current = target.global_transform
+
+func update_transform():
+	if target:
+		print(target)
+		gt_prev = gt_current
+		gt_current = target.global_transform
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	if update and target:
+		update_transform()
+		update = false
+	var f = clamp(Engine.get_physics_interpolation_fraction(),0,1)
+	global_transform = gt_prev.interpolate_with(gt_current,f)
+	
+func _physics_process(delta):
+	update = true
+"
 
 [node name="Root" type="Node"]
 script = ExtResource( 1 )
@@ -801,7 +838,7 @@ shape = SubResource( 30 )
 [node name="Team_B" type="Node" parent="."]
 
 [node name="smooth_camera" type="Spatial" parent="."]
-script = ExtResource( 3 )
+script = SubResource( 67 )
 follow_target = NodePath("../Null_Target")
 
 [node name="Camera" type="Camera" parent="smooth_camera"]

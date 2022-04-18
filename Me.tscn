@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Me.gd" type="Script" id=1]
-[ext_resource path="res://smooth_camera.gd" type="Script" id=2]
 
 [sub_resource type="CapsuleMesh" id=1]
 
@@ -18,14 +17,7 @@ mesh = SubResource( 1 )
 shape = SubResource( 2 )
 
 [node name="camera_root" type="Spatial" parent="."]
-
-[node name="Position3D" type="Position3D" parent="camera_root"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.09644e-07, -2.50835 )
-
-[node name="smooth_camera" type="Spatial" parent="."]
-script = ExtResource( 2 )
-follow_target = NodePath("../camera_root/Position3D")
-
-[node name="Camera" type="Camera" parent="smooth_camera"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="camera_root"]
 current = true
