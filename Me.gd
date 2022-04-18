@@ -1,5 +1,5 @@
 extends KinematicBody
-var okey = ""
+
 var timer = 0
 var spector_index = 0
 var spectator_username = ""
