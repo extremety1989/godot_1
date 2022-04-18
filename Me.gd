@@ -26,6 +26,7 @@ var ammo_4 = 0
 var ammo_5 = 0
 var afk_counter = 7000
 var inputs = null
+var mouse_sensitivity = null
 export var magnitude: float = 8.0
 
 var velocity =  Vector3()
@@ -36,19 +37,24 @@ onready var pivot = get_node("camera_root")
 
 func reload_keys():
 	inputs = get_parent().get_parent().inputs
+	mouse_sensitivity = get_parent().get_parent().data_to_save["mouse_sensitivity"]
 	
 func respawn():
 	health = 100
 	global_transform.origin = Vector3(0,10,0)
 	
 func _input(event):
-	if inputs != null and event is InputEventMouseMotion and inputs["mouse_sensitivity"]:
-		rotate_y(-1 * deg2rad(event.relative.x * inputs["mouse_sensitivity"]))
-		pivot.rotate_x(deg2rad(-event.relative.y) * inputs["mouse_sensitivity"])
+	print(event is InputEventMouseMotion)
+	if  event is InputEventMouseMotion and mouse_sensitivity:
+		print("moving mouse")
+		rotate_y(-1 * deg2rad(event.relative.x * mouse_sensitivity))
+		pivot.rotate_x(deg2rad(-event.relative.y) * mouse_sensitivity)
 		pivot.rotation.x = clamp(pivot.rotation.x, deg2rad(-89), deg2rad(89))
 		look_y = clamp(sin(pivot.rotation.x), -1, 1)
 		look_y = range_lerp(look_y, -1, 1, -1.0, 1.0)
 #		animation.set("parameters/look_angle", look_y)
+	else:
+		print(" ")
 	
 func _ready():
 	health = 100
@@ -61,16 +67,15 @@ func _ready():
 func _physics_process(delta):
 	if health < 0:
 		queue_free()
-		$smooth_camera.queue_free()
 		set_process(false)
 	else:
 		var heading = pivot.global_transform.basis
 		var direction = Vector3.ZERO
 		if inputs["fire"]:
 			pass
-		print(heading)
 		if inputs["forward"]:
 			direction -= heading.z
+		
 			if inputs["fast_motion"] and not inputs["fire"]:
 				pass
 			else:

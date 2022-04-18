@@ -21,5 +21,4 @@ func _ready() -> void:
 
 
 func _on_HSlider_value_changed(value):
-	print(value)
 	set_value(value)

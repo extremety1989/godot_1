@@ -108,10 +108,11 @@ var next_map = maps[0]
 var extra_time = 0
 func _input(event):
 	if not my_username.text == "":
-		if event is InputEventMouseMotion:
-			inputs["mouse_sensitivity"] = data_to_save["mouse_sensitivity"]
+#		if event is InputEventMouseMotion:
+#			inputs["mouse_sensitivity"] = data_to_save["mouse_sensitivity"]
 		if event is InputEventMouseButton and JOINED_SERVER !=999 and get_node_or_null("Team_A/"+str(my_username.text)) or get_node_or_null("Team_B/"+str(my_username.text)):
-			if event.button_index == 1 and event.pressed  and not $Main/chat_input.visible:
+			print("dzajidizaj",event)
+			if event.button_index == 1 and event.pressed and not $Main/chat_input.visible:
 				inputs["fire"] = true
 			elif event.button_index == 1 and not event.pressed  and not $Main/chat_input.visible:
 				inputs["fire"] = false
@@ -396,7 +397,6 @@ func _on_data():
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
-										$smooth_camera.target = other.get_node_or_null("camera_root").get_node_or_null("Position3D")
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
@@ -494,7 +494,6 @@ func _on_data():
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
-										$smooth_camera.target = other.get_node_or_null("camera_root").get_node_or_null("Position3D")
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
@@ -565,7 +564,6 @@ func _on_data():
 				stream.clear()
 		#fire
 		if action == 8:
-			print("8")
 			if get_node_or_null("Team_A/"+str(user_name)):
 				get_node_or_null("Team_A/"+str(user_name)).fire()
 				get_node_or_null("Team_A/"+str(user_name)).muzzle.x = stream.get_float()#position x
@@ -776,11 +774,6 @@ func _process(_delta):
 					timer = 306
 				else:
 					$Main/in_game_time/VBoxContainer2/bottom_time.text = str(timer)
-					
-			if spectator_username!="" and get_node_or_null("Team_A/"+str(spectator_username)):
-				$smooth_camera.target = get_node_or_null("Team_A/"+str(spectator_username)).get_node_or_null("camera_root").get_node_or_null("Position3D")
-			elif spectator_username!="" and get_node_or_null("Team_B/"+str(spectator_username)):
-				$smooth_camera.target = get_node_or_null("Team_B/"+str(spectator_username)).get_node_or_null("camera_root").get_node_or_null("Position3D")
 
 
 
