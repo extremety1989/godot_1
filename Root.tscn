@@ -370,49 +370,51 @@ bbcode_enabled = true
 scroll_following = true
 override_selected_font_color = true
 
-[node name="in_game_menu" type="PanelContainer" parent="Main"]
+[node name="in_game_menu" type="MarginContainer" parent="Main"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/in_game_menu"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+margin_right = 1280.0
+margin_bottom = 720.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="join_other_team" type="Button" parent="Main/in_game_menu/VBoxContainer"]
-margin_right = 12.0
-margin_bottom = 20.0
+margin_left = 554.0
+margin_top = 269.0
+margin_right = 725.0
+margin_bottom = 302.0
 size_flags_horizontal = 4
 theme = SubResource( 60 )
 text = "Join other team"
 
 [node name="spectate" type="Button" parent="Main/in_game_menu/VBoxContainer"]
-margin_left = 634.0
-margin_top = 338.0
-margin_right = 646.0
-margin_bottom = 346.0
+margin_left = 588.0
+margin_top = 306.0
+margin_right = 692.0
+margin_bottom = 339.0
 size_flags_horizontal = 4
 theme = SubResource( 48 )
 text = "Spectate"
 
 [node name="open_muted_players_menu" type="Button" parent="Main/in_game_menu/VBoxContainer"]
-margin_left = 628.0
-margin_top = 350.0
-margin_right = 651.0
-margin_bottom = 358.0
+margin_left = 574.0
+margin_top = 343.0
+margin_right = 705.0
+margin_bottom = 376.0
 size_flags_horizontal = 4
 theme = SubResource( 33 )
 text = "Mute player"
 
 [node name="open_settings" type="Button" parent="Main/in_game_menu/VBoxContainer"]
-margin_left = 630.0
-margin_top = 362.0
-margin_right = 650.0
-margin_bottom = 370.0
+margin_left = 591.0
+margin_top = 380.0
+margin_right = 689.0
+margin_bottom = 413.0
 size_flags_horizontal = 4
 theme = SubResource( 36 )
 text = "Settings"
@@ -421,10 +423,10 @@ __meta__ = {
 }
 
 [node name="quit" type="Button" parent="Main/in_game_menu/VBoxContainer"]
-margin_left = 632.0
-margin_top = 374.0
-margin_right = 648.0
-margin_bottom = 382.0
+margin_left = 612.0
+margin_top = 417.0
+margin_right = 667.0
+margin_bottom = 450.0
 size_flags_horizontal = 4
 theme = SubResource( 39 )
 text = "Quit"
@@ -540,14 +542,14 @@ step = 0.01
 value = 0.01
 
 [node name="HSeparator" type="HSeparator" parent="Main/game_settings/VBoxContainer"]
-margin_top = 422.0
+margin_top = 54.0
 margin_right = 1266.0
-margin_bottom = 426.0
+margin_bottom = 58.0
 
 [node name="VBoxContainer19" type="VBoxContainer" parent="Main/game_settings/VBoxContainer"]
-margin_top = 430.0
+margin_top = 62.0
 margin_right = 1266.0
-margin_bottom = 450.0
+margin_bottom = 82.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Main/game_settings/VBoxContainer/VBoxContainer19"]
 margin_right = 1266.0
@@ -648,30 +650,33 @@ margin_bottom = 720.0
 size_flags_horizontal = 4
 theme = SubResource( 42 )
 
-[node name="in_game_join_match" type="VBoxContainer" parent="Main"]
+[node name="in_game_join_match" type="MarginContainer" parent="Main"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-alignment = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="join_match" type="Button" parent="Main/in_game_join_match"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/in_game_join_match"]
+margin_right = 1280.0
+margin_bottom = 720.0
+alignment = 1
+
+[node name="join_match" type="Button" parent="Main/in_game_join_match/VBoxContainer"]
 margin_left = 611.0
 margin_top = 324.0
 margin_right = 668.0
 margin_bottom = 359.0
 size_flags_horizontal = 4
+size_flags_vertical = 4
 theme = SubResource( 45 )
 text = "Play"
 
-[node name="join_spectate" type="Button" parent="Main/in_game_join_match"]
+[node name="join_spectate" type="Button" parent="Main/in_game_join_match/VBoxContainer"]
 margin_left = 588.0
 margin_top = 363.0
 margin_right = 692.0
 margin_bottom = 396.0
 size_flags_horizontal = 4
+size_flags_vertical = 4
 theme = SubResource( 48 )
 text = "Spectate"
 
@@ -813,7 +818,7 @@ visible = false
 [connection signal="pressed" from="Main/game_settings/VBoxContainer/VBoxContainer19/HBoxContainer/reset" to="." method="_on_reset_pressed"]
 [connection signal="pressed" from="Main/game_settings/VBoxContainer/VBoxContainer19/HBoxContainer/return" to="." method="_on_return_pressed"]
 [connection signal="pressed" from="Main/muted_players_menu/VBoxContainer/return_to_in_game_menu" to="." method="_on_return_to_in_game_menu_pressed"]
-[connection signal="pressed" from="Main/in_game_join_match/join_match" to="." method="_on_join_match_pressed"]
-[connection signal="pressed" from="Main/in_game_join_match/join_spectate" to="." method="_on_join_spectate_pressed"]
+[connection signal="pressed" from="Main/in_game_join_match/VBoxContainer/join_match" to="." method="_on_join_match_pressed"]
+[connection signal="pressed" from="Main/in_game_join_match/VBoxContainer/join_spectate" to="." method="_on_join_spectate_pressed"]
 [connection signal="pressed" from="Main/in_game_choose_team/VBoxContainer/HBoxContainer/VBoxContainer/team_a" to="." method="_on_team_a_pressed"]
 [connection signal="pressed" from="Main/in_game_choose_team/VBoxContainer/HBoxContainer/VBoxContainer2/team_b" to="." method="_on_team_b_pressed"]

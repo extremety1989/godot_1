@@ -1,67 +1,10 @@
 extends Node
-onready var keys = {
-	65: "A",
-	66: "B",
-	67: "C",
-	68: "D",
-	69: "E",
-	70: "F",
-	71: "G",
-	72: "H",
-	73: "I",
-	74:"J",
-	75:"K",
-	76:"L",
-	77:"M",
-	78:"N",
-	79:"O",
-	80:"P",
-	81:"Q",
-	82: "R",
-	83: "S",
-	84:"T",
-	85:"U",
-	86:"V",
-	87:"W",
-	88:"X",
-	89:"Y",
-	90:"Z",
-	16777218:"Tab",
-	16777237:"Shift",
-	16777238:"Ctrl",
-	16777219:"Shift-Tab",
-	32: "Space",
-	1: "Left Mouse",
-	2: "Right Mouse",
-	3: "Middle Mouse",
-	4: "Wheel Up",
-	5: "Wheel Down",
-	16777221: "Enter",
-	16777231: "Left Arrow",
-	16777233: "Right Arrow",
-	16777232: "Up Arrow",
-	16777234: "Down Arrow"
-}
+
 export onready var data_to_save = {
 	"mouse_sensitivity": $Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value,
 }
 onready var default_data_to_save = {	
 	  "mouse_sensitivity": 0.01,
-}
-export var inputs = {	
-	"forward": false,
-	"backward": false,
-	"left": false,
-	"right": false,
-	"jump": false,
-	"fire": false,
-	"aim": false,
-	"fast_motion": false,
-	"drop": false,
-	"pick": false,
-	"use": false,
-	"next_weapon":false,
-	"previous_weapon":false,
 }
 
 # The URL we will connect to
@@ -106,34 +49,8 @@ var test = StreamPeerBuffer.new()
 var maps = ["Open Arena","Sniper Arena"]
 var next_map = maps[0]
 var extra_time = 0
-func _input(event):
+func _unhandled_key_input(event):
 	if not my_username.text == "":
-#		if event is InputEventMouseMotion:
-#			inputs["mouse_sensitivity"] = data_to_save["mouse_sensitivity"]
-		if event is InputEventMouseButton and JOINED_SERVER !=999 and get_node_or_null("Team_A/"+str(my_username.text)) or get_node_or_null("Team_B/"+str(my_username.text)):
-			print("dzajidizaj",event)
-			if event.button_index == 1 and event.pressed and not $Main/chat_input.visible:
-				inputs["fire"] = true
-			elif event.button_index == 1 and not event.pressed  and not $Main/chat_input.visible:
-				inputs["fire"] = false
-			if event.button_index == 2 and event.pressed  and not $Main/chat_input.visible:
-				if not inputs["aim"]:
-					inputs["aim"] = true
-				else:
-					inputs["aim"] = false
-			if event.button_index == 16777233 and event.pressed  and not $Main/chat_input.visible:
-					inputs["next_weapon"] = true
-			if event.button_index == 16777231 and event.pressed  and not $Main/chat_input.visible:
-					inputs["previous_weapon"] = true
-			if event.button_index == 69 and event.pressed  and not $Main/chat_input.visible:
-					inputs["use"] = true
-			if event.button_index == 71 and event.pressed  and not $Main/chat_input.visible:
-					inputs["drop"] = true
-			if event.button_index == 16777237 and event.pressed  and not $Main/chat_input.visible:
-					inputs["fast_motion"] = true
-			if event.button_index == 32 and event.pressed  and not $Main/chat_input.visible:
-					inputs["jump"] = true
-
 		if event is InputEventKey:
 			if JOINED_SERVER !=999:
 				if event.scancode == 16777218 and event.pressed and not $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
@@ -168,60 +85,7 @@ func _input(event):
 						Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 				if $Main/chat_input.visible:
 					$Main/chat_input/HBoxContainer/LineEdit.grab_focus()
-				if event.scancode == 1 and event.pressed  and not $Main/chat_input.visible:
-					inputs["fire"] = true
-				if event.scancode == 2 and event.pressed  and not $Main/chat_input.visible:
-					if not inputs["aim"]:
-						inputs["aim"] = true
-					else:
-						inputs["aim"] = false
-				if event.scancode == 16777233 and event.pressed  and not $Main/chat_input.visible:
-						inputs["next_weapon"] = true
-				elif event.scancode == 16777233 and not event.pressed  and not $Main/chat_input.visible:
-						inputs["next_weapon"] = false
-				if event.scancode == 16777231 and event.pressed  and not $Main/chat_input.visible:
-						inputs["previous_weapon"] = true
-				elif event.scancode == 16777231 and not event.pressed  and not $Main/chat_input.visible:
-						inputs["previous_weapon"] = false
-				if event.scancode == 69 and event.pressed  and not $Main/chat_input.visible:
-						inputs["use"] = true
-				elif event.scancode == 69 and not event.pressed  and not $Main/chat_input.visible:
-						inputs["drop"] = true
-				if event.scancode == 71 and event.pressed  and not $Main/chat_input.visible:
-						inputs["drop"] = true
-				elif event.scancode == 71 and not event.pressed  and not $Main/chat_input.visible:
-						inputs["drop"] = false
-				if event.scancode == 16777237 and event.pressed  and not $Main/chat_input.visible:
-						inputs["fast_motion"] = true
-				elif event.scancode == 16777237 and not event.pressed  and not $Main/chat_input.visible:
-						inputs["fast_motion"] = false
-
-				if event.pressed and event.scancode == 32  and not $Main/chat_input.visible:
-						inputs["jump"] = true
-				elif not event.pressed and event.scancode == 32  and not $Main/chat_input.visible:
-						inputs["jump"] = false
-				if spectator_username != "" and event.pressed and event.scancode == 32 and not get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)):
-						for name in NAMES:
-							if name != my_username.text and name != spectator_username:
-								spectator_username = str(name)
-								break
-
-				if event.pressed and event.scancode == 90 and not $Main/chat_input.visible:
-						inputs["forward"] = true
-				elif not event.pressed and event.scancode == 90  and not $Main/chat_input.visible:
-						inputs["forward"] = false
-				if event.pressed and event.scancode == 83  and not $Main/chat_input.visible:
-						inputs["backward"] = true
-				elif not event.pressed and event.scancode == 83  and not $Main/chat_input.visible:
-						inputs["backward"] = false
-				if event.pressed and event.scancode == 81  and not $Main/chat_input.visible:
-						inputs["left"] = true
-				elif not event.pressed and event.scancode == 81  and not $Main/chat_input.visible:
-						inputs["left"] = false
-				if event.pressed and event.scancode == 68 and not $Main/chat_input.visible:
-						inputs["right"] = true
-				elif not event.pressed and event.scancode == 68  and not $Main/chat_input.visible:
-						inputs["right"] = false
+		
 				if event.pressed and event.scancode == 89 and not $Main/chat_input.visible:
 					$Main/chat_input.visible = true		
 					$Main/chat_input/HBoxContainer/Label.text = my_username.text + ":"
@@ -307,17 +171,17 @@ func _on_data():
 				var t = stream.get_u64()
 				if get_node_or_null("Team_A/"+str(user_name)):
 					get_node_or_null("Team_A/"+str(user_name)).position = Vector3(stream.get_float(),stream.get_float(),stream.get_float())
-					get_node_or_null("Team_A/"+str(user_name)).velocity.x = stream.get_float()#velocity x
-					get_node_or_null("Team_A/"+str(user_name)).velocity.y = stream.get_float()#velocity y
-					get_node_or_null("Team_A/"+str(user_name)).velocity.z = stream.get_float()#velocity z
+					get_node_or_null("Team_A/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
+					get_node_or_null("Team_A/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
+					get_node_or_null("Team_A/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
 					get_node_or_null("Team_A/"+str(user_name)).pivot.rotation.x = stream.get_float()#rotation x
 					get_node_or_null("Team_A/"+str(user_name)).rotation.y = stream.get_float()#rotation y
 					stream.clear()
 				elif get_node_or_null("Team_B/"+str(user_name)):
 					get_node_or_null("Team_B/"+str(user_name)).position = Vector3(stream.get_float(),stream.get_float(),stream.get_float())
-					get_node_or_null("Team_B/"+str(user_name)).velocity.x = stream.get_float()#velocity x
-					get_node_or_null("Team_B/"+str(user_name)).velocity.y = stream.get_float()#velocity y
-					get_node_or_null("Team_B/"+str(user_name)).velocity.z = stream.get_float()#velocity z
+					get_node_or_null("Team_B/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
+					get_node_or_null("Team_B/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
+					get_node_or_null("Team_B/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
 					get_node_or_null("Team_B/"+str(user_name)).pivot.rotation.x = stream.get_float()#rotation x
 					get_node_or_null("Team_B/"+str(user_name)).rotation.y = stream.get_float()#rotation y
 					stream.clear()
@@ -390,6 +254,20 @@ func _on_data():
 										get_node_or_null("Spectators/"+str(user_name)).ammo_4 = stream.get_u8()#ammo 4
 										get_node_or_null("Spectators/"+str(user_name)).ammo_5 = stream.get_u8()#ammo 5
 										$Team_A.add_child(get_node_or_null("Spectators/"+str(user_name)))
+										if user_name == my_username:
+											var node = get_node_or_null("Main/chat_box/RichTextLabel")
+											node.bbcode_text += '[color=green]'
+											node.bbcode_text += "[SYSTEM]: "
+											node.bbcode_text += 'You joined team A.'
+											node.bbcode_text += '[/color]'
+											node.bbcode_text += '\n'
+										else:
+											var node = get_node_or_null("Main/chat_box/RichTextLabel")
+											node.bbcode_text += '[color=green]'
+											node.bbcode_text += "[SYSTEM]: "
+											node.bbcode_text += str(user_name)+' joined team A.'
+											node.bbcode_text += '[/color]'
+											node.bbcode_text += '\n'
 										$Spectators.remove_child(get_node_or_null("Spectators/"+str(user_name)))
 								else:
 									var other = null
@@ -397,6 +275,12 @@ func _on_data():
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
+										var node = get_node_or_null("Main/chat_box/RichTextLabel")
+										node.bbcode_text += '[color=green]'
+										node.bbcode_text += "[SYSTEM]: "
+										node.bbcode_text += 'You joined team A.'
+										node.bbcode_text += '[/color]'
+										node.bbcode_text += '\n'
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
@@ -404,7 +288,7 @@ func _on_data():
 										var node = get_node_or_null("Main/chat_box/RichTextLabel")
 										node.bbcode_text += '[color=green]'
 										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += str(user_name)+' joined the game.'
+										node.bbcode_text += str(user_name)+' joined team A.'
 										node.bbcode_text += '[/color]'
 										node.bbcode_text += '\n'
 									NAMES[user_name] = false
@@ -487,13 +371,34 @@ func _on_data():
 									get_node_or_null("Spectators/"+str(user_name)).ammo_4 = stream.get_u8()#ammo 4
 									get_node_or_null("Spectators/"+str(user_name)).ammo_5 = stream.get_u8()#ammo 5
 									$Team_B.add_child(get_node_or_null("Spectators/"+str(user_name)))
+									if user_name == my_username:
+										var node = get_node_or_null("Main/chat_box/RichTextLabel")
+										node.bbcode_text += '[color=green]'
+										node.bbcode_text += "[SYSTEM]: "
+										node.bbcode_text += 'You joined team B.'
+										node.bbcode_text += '[/color]'
+										node.bbcode_text += '\n'
+									else:
+										var node = get_node_or_null("Main/chat_box/RichTextLabel")
+										node.bbcode_text += '[color=green]'
+										node.bbcode_text += "[SYSTEM]: "
+										node.bbcode_text += str(user_name)+' joined team B.'
+										node.bbcode_text += '[/color]'
+										node.bbcode_text += '\n'
 									$Spectators.remove_child(get_node_or_null("Spectators/"+str(user_name)))
+								#user was not spectating he joins the team
 								else:
 									var other = null
 									if user_name == my_username.text:
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
+										var node = get_node_or_null("Main/chat_box/RichTextLabel")
+										node.bbcode_text += '[color=green]'
+										node.bbcode_text += "[SYSTEM]: "
+										node.bbcode_text += 'You joined the game.'
+										node.bbcode_text += '[/color]'
+										node.bbcode_text += '\n'
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
@@ -556,10 +461,38 @@ func _on_data():
 					if get_node_or_null("Team_A/"+str(user_name)):
 						if not get_node_or_null("Spectators/"+str(user_name)):
 							get_node_or_null("Spectators/"+str(user_name)).add_child(get_node_or_null("Team_A/"+str(user_name)))
+							if user_name == my_username.text:
+								var node = get_node_or_null("Main/chat_box/RichTextLabel")
+								node.bbcode_text += '[color=orange]'
+								node.bbcode_text += "[SYSTEM]: "
+								node.bbcode_text += 'You are spectating.'
+								node.bbcode_text += '[/color]'
+								node.bbcode_text += '\n'
+							else:
+								var node = get_node_or_null("Main/chat_box/RichTextLabel")
+								node.bbcode_text += '[color=orange]'
+								node.bbcode_text += "[SYSTEM]: "
+								node.bbcode_text += str(user_name)+'is spectating.'
+								node.bbcode_text += '[/color]'
+								node.bbcode_text += '\n'
 						$Team_A.remove_child(get_node_or_null("Team_A/"+str(user_name)))
 					elif get_node_or_null("Team_B/"+str(user_name)):
 						if not get_node_or_null("Spectators/"+str(user_name)):
 							get_node_or_null("Spectators/"+str(user_name)).add_child(get_node_or_null("Team_B/"+str(user_name)))
+							if user_name == my_username.text:
+								var node = get_node_or_null("Main/chat_box/RichTextLabel")
+								node.bbcode_text += '[color=orange]'
+								node.bbcode_text += "[SYSTEM]: "
+								node.bbcode_text += 'You are spectating.'
+								node.bbcode_text += '[/color]'
+								node.bbcode_text += '\n'
+							else:
+								var node = get_node_or_null("Main/chat_box/RichTextLabel")
+								node.bbcode_text += '[color=orange]'
+								node.bbcode_text += "[SYSTEM]: "
+								node.bbcode_text += str(user_name)+'is spectating.'
+								node.bbcode_text += '[/color]'
+								node.bbcode_text += '\n'
 						$Team_B.remove_child(get_node_or_null("Team_B/"+str(user_name)))
 				stream.clear()
 		#fire
@@ -612,12 +545,6 @@ func _on_data():
 		very_first = OS.get_system_time_msecs()
 		if user_name == my_username.text and JOINED_SERVER == 999:
 			JOINED_SERVER = server_idx+100
-			var node = get_node_or_null("Main/chat_box/RichTextLabel")
-			node.bbcode_text += '[color=green]'
-			node.bbcode_text += "[SYSTEM]: "
-			node.bbcode_text += 'You joined the game.'
-			node.bbcode_text += '[/color]'
-			node.bbcode_text += '\n'
 			NAMES[user_name] = false
 
 func _process(_delta):
@@ -735,9 +662,9 @@ func _process(_delta):
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.x)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.y)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.z)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).velocity.x)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).velocity.y)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).velocity.z)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.x)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.y)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.z)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).pivot.rotation.x)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).rotation.y)
 					_client.get_peer(1).put_packet(test.data_array)
@@ -746,9 +673,9 @@ func _process(_delta):
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.x)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.y)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.z)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).velocity.x)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).velocity.y)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).velocity.z)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.x)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.y)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.z)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).pivot.rotation.x)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).rotation.y)
 					_client.get_peer(1).put_packet(test.data_array)
