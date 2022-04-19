@@ -170,7 +170,7 @@ func _on_data():
 			if user_name != my_username.text and JOINED_SERVER != 999:
 				var t = stream.get_u64()
 				if get_node_or_null("Team_A/"+str(user_name)):
-					get_node_or_null("Team_A/"+str(user_name)).position = Vector3(stream.get_float(),stream.get_float(),stream.get_float())
+					get_node_or_null("Team_A/"+str(user_name)).Tween.interpolate_property(get_node_or_null("Team_A/"+str(user_name)),"translation",get_node_or_null("Team_A/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.1,Tween.TRANS_QUART)
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
@@ -178,7 +178,7 @@ func _on_data():
 					get_node_or_null("Team_A/"+str(user_name)).rotation.y = stream.get_float()#rotation y
 					stream.clear()
 				elif get_node_or_null("Team_B/"+str(user_name)):
-					get_node_or_null("Team_B/"+str(user_name)).position = Vector3(stream.get_float(),stream.get_float(),stream.get_float())
+					get_node_or_null("Team_B/"+str(user_name)).Tween.interpolate_property(get_node_or_null("Team_B/"+str(user_name)),"translation",get_node_or_null("Team_B/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.1,Tween.TRANS_QUART)
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z

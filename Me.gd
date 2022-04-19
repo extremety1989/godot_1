@@ -27,7 +27,7 @@ var ammo_5 = 0
 var afk_counter = 7000
 var mouse_sensitivity = null
 export var magnitude: float = 8.0
-
+var jumps_made = 0
 var input_direction =  Vector3()
 var look_y = Vector3()
 var local_gravity = Vector3()
@@ -72,17 +72,36 @@ func _physics_process(delta):
 	else:
 		input_direction = get_input_deriction()
 		var heading = pivot.global_transform.basis
-
-		if not is_on_floor():
-			local_gravity.y -= 9.8  * delta
-		elif is_on_floor():
-			local_gravity = Vector3.ZERO
-			
-		if Input.is_action_just_pressed("ui_select") and is_on_floor():
+		local_gravity.y -= 9.8  * delta
+		var is_falling = local_gravity.y > 0.0 and not is_on_floor()
+		var is_jumping = Input.is_action_just_pressed("ui_select") and is_on_floor()
+		var is_double_jumping = Input.is_action_just_pressed("ui_select") and is_falling
+		var is_jump_cancelled = Input.is_action_just_pressed("ui_select") and local_gravity.y < 0.0
+		var is_idling = is_on_floor() and (is_zero_approx(input_direction.x) and is_zero_approx(input_direction.z))
+		var is_running = is_on_floor() and (not is_zero_approx(input_direction.x) and not is_zero_approx(input_direction.z))
+		
+		if is_jumping:
+			jumps_made +=1
 			local_gravity = Vector3.UP * 3.0
+		elif is_double_jumping:
+			jumps_made +=1
+			if jumps_made <= 2:
+				local_gravity = Vector3.UP * 2.0
+		elif is_jump_cancelled:
+			local_gravity = Vector3.ZERO
+		elif is_idling or is_running:
+			jumps_made = 0
 
 		move_and_slide((input_direction + local_gravity) * magnitude, Vector3.UP)
-
+		if is_jumping or is_double_jumping:
+			#play animation of jump
+			pass
+		elif is_running:
+			pass
+		elif is_falling:
+			pass
+		elif is_idling:
+			pass
 
 	
 #func _integrate_forces(state):

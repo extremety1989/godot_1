@@ -23,3 +23,5 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.32866, 4.50886 )
 
 [node name="Camera" type="Camera" parent="camera_root"]
 current = true
+
+[node name="Tween" type="Tween" parent="."]
