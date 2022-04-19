@@ -170,7 +170,8 @@ func _on_data():
 			if user_name != my_username.text and JOINED_SERVER != 999:
 				var t = stream.get_u64()
 				if get_node_or_null("Team_A/"+str(user_name)):
-					get_node_or_null("Team_A/"+str(user_name)).Tween.interpolate_property(get_node_or_null("Team_A/"+str(user_name)),"translation",get_node_or_null("Team_A/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.1,Tween.TRANS_QUART)
+					get_node_or_null("Team_A/"+str(user_name)).translation = lerp(get_node_or_null("Team_A/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.8)
+					
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
@@ -178,7 +179,8 @@ func _on_data():
 					get_node_or_null("Team_A/"+str(user_name)).rotation.y = stream.get_float()#rotation y
 					stream.clear()
 				elif get_node_or_null("Team_B/"+str(user_name)):
-					get_node_or_null("Team_B/"+str(user_name)).Tween.interpolate_property(get_node_or_null("Team_B/"+str(user_name)),"translation",get_node_or_null("Team_B/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.1,Tween.TRANS_QUART)
+					get_node_or_null("Team_B/"+str(user_name)).translation = lerp(get_node_or_null("Team_B/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.8)
+					
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
@@ -396,7 +398,7 @@ func _on_data():
 										var node = get_node_or_null("Main/chat_box/RichTextLabel")
 										node.bbcode_text += '[color=green]'
 										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += 'You joined the game.'
+										node.bbcode_text += 'You joined team A.'
 										node.bbcode_text += '[/color]'
 										node.bbcode_text += '\n'
 									else:
@@ -406,7 +408,7 @@ func _on_data():
 										var node = get_node_or_null("Main/chat_box/RichTextLabel")
 										node.bbcode_text += '[color=green]'
 										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += str(user_name)+' joined the game.'
+										node.bbcode_text += str(user_name)+' joined team A.'
 										node.bbcode_text += '[/color]'
 										node.bbcode_text += '\n'
 									NAMES[user_name] = false
@@ -641,7 +643,7 @@ func _process(_delta):
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
 
-			if delta > 0.1000/0.30:
+			if delta > 0.1000/0.10:
 				#fire
 	#			if team > 0:
 	#				test.put_u8(JOINED_SERVER)#code is now server_id
@@ -659,9 +661,9 @@ func _process(_delta):
 				test.put_u8(3)#action
 				test.put_u64(OS.get_system_time_msecs())
 				if get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_A/"+str(my_username.text)).team == 1:
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.x)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.y)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).global_transform.origin.z)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.x)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.y)
+					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.z)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.x)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.y)
 					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.z)
@@ -670,9 +672,9 @@ func _process(_delta):
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
 				elif get_node_or_null("Team_B/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)).team == 2:
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.x)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.y)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).global_transform.origin.z)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.x)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.y)
+					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.z)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.x)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.y)
 					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.z)
