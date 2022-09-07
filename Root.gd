@@ -8,7 +8,6 @@ export var websocket_url = "wss://ImportantCoordinatedDebugging.extremety1989.re
 var _client = null
 #onready var ssl = preload("res://x509_certificate.crt")
 onready var config = null
-onready var my_username = $Main/start_menu/VBoxContainer/username
 onready var JOINED_SERVER = 999
 onready var NAMES = {}
 onready var server_idx = 0
@@ -44,7 +43,7 @@ var maps = ["Open Arena","Sniper Arena"]
 var next_map = maps[0]
 var extra_time = 0
 func _unhandled_key_input(event):
-	if not my_username.text == "":
+	if not config["my_username"] == "":
 		if event is InputEventKey:
 			if JOINED_SERVER !=999:
 				if event.scancode == 16777217 and event.pressed and $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
@@ -102,7 +101,7 @@ func _on_data():
 		if action == 3:
 			if not user_name in NAMES:
 				NAMES.erase(user_name)
-			if user_name != my_username.text and JOINED_SERVER != 999:
+			if user_name != config["my_username"] and JOINED_SERVER != 999:
 				var t = stream.get_u64()
 				if get_node_or_null("Team_A/"+str(user_name)):
 					get_node_or_null("Team_A/"+str(user_name)).translation = lerp(get_node_or_null("Team_A/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.8)
@@ -165,7 +164,7 @@ func _on_data():
 										$Spectators.remove_child(get_node_or_null("Spectators/"+str(user_name)))
 								else:
 									var other = null
-									if user_name == my_username.text:
+									if user_name == config["my_username"]:
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
@@ -256,7 +255,7 @@ func _on_data():
 								#user was not spectating he joins the team
 								else:
 									var other = null
-									if user_name == my_username.text:
+									if user_name == config["my_username"]:
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
@@ -335,43 +334,6 @@ func _on_data():
 				get_node_or_null("Team_B/"+str(user_name)).muzzle.y = stream.get_float()#position y
 				get_node_or_null("Team_B/"+str(user_name)).muzzle.z = stream.get_float()#position z
 			stream.clear()
-	if code == 0:
-		if user_name != "":
-			my_username.text = user_name
-			$Main/server_menu.visible = true
-			$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer/ScrollContainer/Servers.unselect_all()
-			if $Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer/ScrollContainer/Servers.get_item_count() < 1:
-				$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer/ScrollContainer/Servers.connect("item_selected",self,"server_selected",[$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer/ScrollContainer/Servers])
-				for i in range(1,11):
-					$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer/ScrollContainer/Servers.add_item(("Server "+str(i)))
-			if $Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList and $Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.get_item_count() > 0:
-				for i in range($Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.get_item_count()):
-					$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.remove_item(i)
-			$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.unselect_all()
-		else:
-			$Main/start_menu/VBoxContainer/error_message.text = "username already in use"
-
-	elif code == 1 and stream.get_size() > 1:
-		#see player names
-		$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.clear()
-		if not user_name in NAMES:
-			NAMES[user_name] = false
-		if NAMES.size() > 0:
-			$Main/start_menu.visible = false
-			for i in NAMES:
-				$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.add_item(i)
-	elif code == 1:
-				$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.clear()
-				$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/ScrollContainer/ItemList.add_item("no players")
-	elif code == 2 and stream.get_size() > 1:
-		#first join
-		$Main/in_game_time.visible = true
-		$Main/server_menu.visible = false
-		$Main/in_game_join_match.visible = true
-		very_first = OS.get_system_time_msecs()
-		if user_name == my_username.text and JOINED_SERVER == 999:
-			JOINED_SERVER = server_idx+100
-			NAMES[user_name] = false
 
 func _process(_delta):
 	if _client:
@@ -379,67 +341,67 @@ func _process(_delta):
 		if JOINED_SERVER != 999 :
 			delta += _delta
 			if delta > 0.1000:
-				if get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_A/"+str(my_username.text)).team == 1:
+				if get_node_or_null("Team_A/"+str(config["my_username"])) and get_node_or_null("Team_A/"+str(config["my_username"])).team == 1:
 					test.put_u8(JOINED_SERVER)#code is now server_id
-					test.put_string(my_username.text)
+					test.put_string(config["my_username"])
 					test.put_u8(7)#action
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).skin)#character skin
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).skin)#character skin
 					test.put_u64(very_first)
-					test.put_u16(get_node_or_null("Team_A/"+str(my_username.text)).timer)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).game_mode)
-					test.put_u16(get_node_or_null("Team_A/"+str(my_username.text)).game_round)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).team)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).score_a)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).score_b)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).health)
-					test.put_u16(get_node_or_null("Team_A/"+str(my_username.text)).deaths)
-					test.put_u16(get_node_or_null("Team_A/"+str(my_username.text)).kills)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).current_weapon)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).weapon_1)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).weapon_2)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).weapon_3)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).weapon_4)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).weapon_5)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).current_ammo)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).ammo_1)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).ammo_2)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).ammo_3)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).ammo_4)
-					test.put_u8(get_node_or_null("Team_A/"+str(my_username.text)).ammo_5)
+					test.put_u16(get_node_or_null("Team_A/"+str(config["my_username"])).timer)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).game_mode)
+					test.put_u16(get_node_or_null("Team_A/"+str(config["my_username"])).game_round)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).team)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).score_a)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).score_b)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).health)
+					test.put_u16(get_node_or_null("Team_A/"+str(config["my_username"])).deaths)
+					test.put_u16(get_node_or_null("Team_A/"+str(config["my_username"])).kills)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).current_weapon)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).weapon_1)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).weapon_2)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).weapon_3)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).weapon_4)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).weapon_5)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).current_ammo)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).ammo_1)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).ammo_2)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).ammo_3)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).ammo_4)
+					test.put_u8(get_node_or_null("Team_A/"+str(config["my_username"])).ammo_5)
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
-				elif get_node_or_null("Team_B/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)).team == 2:
+				elif get_node_or_null("Team_B/"+str(config["my_username"])) and get_node_or_null("Team_B/"+str(config["my_username"])).team == 2:
 					test.put_u8(JOINED_SERVER)#code is now server_id
-					test.put_string(my_username.text)
+					test.put_string(config["my_username"])
 					test.put_u8(7)#action
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).skin)#character skin
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).skin)#character skin
 					test.put_u64(very_first)
-					test.put_u16(get_node_or_null("Team_B/"+str(my_username.text)).timer)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).game_mode)
-					test.put_u16(get_node_or_null("Team_B/"+str(my_username.text)).game_round)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).team)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).score_a)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).score_b)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).health)
-					test.put_u16(get_node_or_null("Team_B/"+str(my_username.text)).deaths)
-					test.put_u16(get_node_or_null("Team_B/"+str(my_username.text)).kills)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).current_weapon)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).weapon_1)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).weapon_2)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).weapon_3)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).weapon_4)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).weapon_5)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).current_ammo)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).ammo_1)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).ammo_2)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).ammo_3)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).ammo_4)
-					test.put_u8(get_node_or_null("Team_B/"+str(my_username.text)).ammo_5)
+					test.put_u16(get_node_or_null("Team_B/"+str(config["my_username"])).timer)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).game_mode)
+					test.put_u16(get_node_or_null("Team_B/"+str(config["my_username"])).game_round)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).team)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).score_a)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).score_b)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).health)
+					test.put_u16(get_node_or_null("Team_B/"+str(config["my_username"])).deaths)
+					test.put_u16(get_node_or_null("Team_B/"+str(config["my_username"])).kills)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).current_weapon)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).weapon_1)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).weapon_2)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).weapon_3)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).weapon_4)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).weapon_5)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).current_ammo)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).ammo_1)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).ammo_2)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).ammo_3)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).ammo_4)
+					test.put_u8(get_node_or_null("Team_B/"+str(config["my_username"])).ammo_5)
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
-				elif not get_node_or_null("Spectators/"+str(my_username.text)):
+				elif not get_node_or_null("Spectators/"+str(config["my_username"])):
 					test.put_u8(JOINED_SERVER)#code is now server_id
-					test.put_string(my_username.text)
+					test.put_string(config["my_username"])
 					test.put_u8(7)#action
 					test.put_u8(skin)#character skin
 					test.put_u64(very_first)
@@ -472,7 +434,7 @@ func _process(_delta):
 	#			if team > 0:
 	#				test.put_u8(JOINED_SERVER)#code is now server_id
 	#				test.put_u8(8)#action
-	#				test.put_string(my_username.text)
+	#				test.put_string(config["my_username"])
 	#				test.put_float(state.x)
 	#				test.put_float(state.y)
 	#				test.put_float(state.z)
@@ -481,29 +443,29 @@ func _process(_delta):
 
 				#emit movements of player
 				test.put_u8(JOINED_SERVER)#code is now server_id
-				test.put_string(my_username.text)
+				test.put_string(config["my_username"])
 				test.put_u8(3)#action
 				test.put_u64(OS.get_system_time_msecs())
-				if get_node_or_null("Team_A/"+str(my_username.text)) and get_node_or_null("Team_A/"+str(my_username.text)).team == 1:
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.x)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.y)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).translation.z)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.x)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.y)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).input_direction.z)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).pivot.rotation.x)
-					test.put_float(get_node_or_null("Team_A/"+str(my_username.text)).rotation.y)
+				if get_node_or_null("Team_A/"+str(config["my_username"])) and get_node_or_null("Team_A/"+str(config["my_username"])).team == 1:
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).translation.x)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).translation.y)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).translation.z)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).input_direction.x)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).input_direction.y)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).input_direction.z)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).pivot.rotation.x)
+					test.put_float(get_node_or_null("Team_A/"+str(config["my_username"])).rotation.y)
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
-				elif get_node_or_null("Team_B/"+str(my_username.text)) and get_node_or_null("Team_B/"+str(my_username.text)).team == 2:
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.x)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.y)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).translation.z)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.x)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.y)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).input_direction.z)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).pivot.rotation.x)
-					test.put_float(get_node_or_null("Team_B/"+str(my_username.text)).rotation.y)
+				elif get_node_or_null("Team_B/"+str(config["my_username"])) and get_node_or_null("Team_B/"+str(config["my_username"])).team == 2:
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).translation.x)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).translation.y)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).translation.z)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).input_direction.x)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).input_direction.y)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).input_direction.z)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).pivot.rotation.x)
+					test.put_float(get_node_or_null("Team_B/"+str(config["my_username"])).rotation.y)
 					_client.get_peer(1).put_packet(test.data_array)
 					test.clear()
 
@@ -536,14 +498,14 @@ func _notification(what):
 		if JOINED_SERVER != 999:
 			test.put_u8(JOINED_SERVER)#code is now server_id
 			test.put_u8(6)#action
-			test.put_string(my_username.text)
+			test.put_string(config["my_username"])
 			_client.get_peer(1).put_packet(test.data_array)
 			test.clear()
 		set_process(false)
 
 
 func connect_to_server():
-		if not my_username.text == "" and my_username.text.length() > 3 and my_username.text.length() < 24:
+		if not config["my_username"] == "" and config["my_username"].length() > 3 and config["my_username"].length() < 24:
 			_client = WebSocketClient.new()
 			 # Connect base signals to get notified of connection open, close, and errors.
 			_client.connect("connection_closed", self, "_closed")
@@ -564,6 +526,6 @@ func join():
 	test = StreamPeerBuffer.new()
 	test.put_u8(2)
 	test.put_u8(server_idx)
-	test.put_string(my_username.text.strip_edges())
+	test.put_string(config["my_username"].strip_edges())
 	_client.get_peer(1).put_packet(test.data_array)
 	test.clear()
