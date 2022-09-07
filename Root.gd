@@ -1,11 +1,5 @@
 extends Node
 
-export onready var data_to_save = {
-	"mouse_sensitivity": $Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value,
-}
-onready var default_data_to_save = {	
-	  "mouse_sensitivity": 0.01,
-}
 
 # The URL we will connect to
 export var websocket_url = "wss://ImportantCoordinatedDebugging.extremety1989.repl.co"
@@ -13,7 +7,7 @@ export var websocket_url = "wss://ImportantCoordinatedDebugging.extremety1989.re
 # Our WebSocketClient instance
 var _client = null
 #onready var ssl = preload("res://x509_certificate.crt")
-onready var reset_data_to_save = null
+onready var config = null
 onready var my_username = $Main/start_menu/VBoxContainer/username
 onready var JOINED_SERVER = 999
 onready var NAMES = {}
@@ -53,56 +47,8 @@ func _unhandled_key_input(event):
 	if not my_username.text == "":
 		if event is InputEventKey:
 			if JOINED_SERVER !=999:
-				if event.scancode == 16777218 and event.pressed and not $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
-					for i in $Main/in_game_players_info/HBoxContainer/VBoxContainer/PanelContainer.get_children():
-							$Main/in_game_players_info/HBoxContainer/VBoxContainer/PanelContainer.remove_child(i)
-					if $Team_A.get_child_count() > 0:
-						for child in $Team_A.get_children():
-							var label = Label.new()
-							label.text += str(child.name)
-							$Main/in_game_players_info/HBoxContainer/VBoxContainer/PanelContainer.add_child(label)
-					if $Team_B.get_child_count() > 0:
-						for child in $Team_B.get_children():
-							var label = Label.new()
-							label.text += str(child.name)
-							$Main/in_game_players_info/HBoxContainer/VBoxContainer2/PanelContainer.add_child(label)
-					$Main/in_game_players_info.show()
-				elif event.scancode == 16777218 and not event.pressed and not $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
-					$Main/in_game_players_info.hide()
-				if event.scancode == 16777217 and event.pressed and not $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
-						$Main/in_game_menu.visible = true
-						$Main/in_game_time.visible = false
-						Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-						if NAMES.size() < 2:
-							$Main/in_game_menu/VBoxContainer/spectate.hide()
-							$Main/in_game_menu/VBoxContainer/open_muted_players_menu.hide()
-						else:
-							$Main/in_game_menu/VBoxContainer/spectate.show()
-							$Main/in_game_menu/VBoxContainer/open_muted_players_menu.show()
-				elif event.scancode == 16777217 and event.pressed and $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
-						$Main/in_game_menu.visible = false
-						$Main/in_game_time.visible = true
+				if event.scancode == 16777217 and event.pressed and $Main/in_game_menu.visible and not $Main/muted_players_menu.visible and not $Main/in_game_join_match.visible and not $Main/game_settings.visible and not $Main/in_game_choose_team.visible:
 						Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-				if $Main/chat_input.visible:
-					$Main/chat_input/HBoxContainer/LineEdit.grab_focus()
-		
-				if event.pressed and event.scancode == 89 and not $Main/chat_input.visible:
-					$Main/chat_input.visible = true		
-					$Main/chat_input/HBoxContainer/Label.text = my_username.text + ":"
-				elif event.pressed and  event.scancode == 16777221  and $Main/chat_input.visible:
-					if $Main/chat_input/HBoxContainer/LineEdit.text !="" and len($Main/chat_input/HBoxContainer/LineEdit.text) < 101:
-						test = StreamPeerBuffer.new()
-						test.put_u8(JOINED_SERVER)
-						test.put_u8(4)
-						test.put_string(my_username.text)
-						test.put_string($Main/chat_input/HBoxContainer/LineEdit.text)
-						_client.get_peer(1).put_packet(test.data_array)
-						test.clear()
-						$Main/chat_input/HBoxContainer/LineEdit.text = ""
-					$Main/chat_input/HBoxContainer/LineEdit.release_focus()
-					$Main/chat_input.visible = false
-
-
 
 func _ready():
 	var file = File.new()
@@ -110,30 +56,19 @@ func _ready():
 		file.open("user://saved_settings.json", File.READ)
 		var content = file.get_var()
 		if content:
-			$Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value = content["mouse_sensitivity"]
-			data_to_save = content
-		else:
-			data_to_save = default_data_to_save
-	else:
-		file.open("user://saved_settings.json", File.WRITE)
-		data_to_save = default_data_to_save
-		file.store_var(data_to_save)
+			config = content
 	file.close()
 
 func _closed(was_clean = false):
 	print("Closed, clean: ", was_clean)
 	JOINED_SERVER = 999
-	NAMES = {}
-	$Main/in_game_time.visible = false
-	$Main/start_menu.visible = true
-	$Main/chat_box.visible = false
-	$Main/chat_input.visible = false
 
 func _connected(proto):
 	print("conected ",proto)
 	test = StreamPeerBuffer.new()
 	test.put_u8(0)
-	test.put_string(my_username.text.strip_edges())
+	#test.put_string(config["my_username"].text.strip_edges())
+	test.put_string(config["my_username"])
 	_client.get_peer(1).put_packet(test.data_array)
 	test.clear()
 	set_process(true)
@@ -171,7 +106,6 @@ func _on_data():
 				var t = stream.get_u64()
 				if get_node_or_null("Team_A/"+str(user_name)):
 					get_node_or_null("Team_A/"+str(user_name)).translation = lerp(get_node_or_null("Team_A/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.8)
-					
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_A/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
@@ -180,44 +114,16 @@ func _on_data():
 					stream.clear()
 				elif get_node_or_null("Team_B/"+str(user_name)):
 					get_node_or_null("Team_B/"+str(user_name)).translation = lerp(get_node_or_null("Team_B/"+str(user_name)).translation,Vector3(stream.get_float(),stream.get_float(),stream.get_float()),0.8)
-					
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.x = stream.get_float()#input_direction x
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.y = stream.get_float()#input_direction y
 					get_node_or_null("Team_B/"+str(user_name)).input_direction.z = stream.get_float()#input_direction z
 					get_node_or_null("Team_B/"+str(user_name)).pivot.rotation.x = stream.get_float()#rotation x
 					get_node_or_null("Team_B/"+str(user_name)).rotation.y = stream.get_float()#rotation y
 					stream.clear()
-		#chat output
-		if action == 4:
-			var message = stream.get_string()
-			if user_name in NAMES and not NAMES[user_name]:
-				if user_name == my_username.text:
-					$Main/chat_box/RichTextLabel.bbcode_text += '[color=yellow]'
-					$Main/chat_box/RichTextLabel.bbcode_text += '[you]: '
-					$Main/chat_box/RichTextLabel.bbcode_text += message
-					$Main/chat_box/RichTextLabel.bbcode_text += '[/color]'
-				else:
-					$Main/chat_box/RichTextLabel.bbcode_text += '['+user_name+']: '
-					$Main/chat_box/RichTextLabel.bbcode_text += message
-				$Main/chat_box/RichTextLabel.bbcode_text += '\n'
-			stream.clear()
 		#Mute/unmute player
 		if action == 5:
 			pass
-		#player left the game
-		if action == 6:
-			if user_name != my_username.text:
-				if user_name in NAMES:
-					NAMES.erase(user_name)
-				$Players.remove_child(user_name)
-				$Main/chat_box/RichTextLabel.bbcode_text += '[color=cyan]'
-				$Main/chat_box/RichTextLabel.bbcode_text += '[SYSTEM]: '
-				$Main/chat_box/RichTextLabel.bbcode_text += user_name + ' left the game.'
-				$Main/chat_box/RichTextLabel.bbcode_text += '[/color]'
-				$Main/chat_box/RichTextLabel.bbcode_text += '\n'
-			stream.clear()
 		#game status/times etc..
-		
 		if action == 7:
 				var user_skin = stream.get_u8()
 				var game_who_is_the_first = stream.get_u64()
@@ -256,20 +162,6 @@ func _on_data():
 										get_node_or_null("Spectators/"+str(user_name)).ammo_4 = stream.get_u8()#ammo 4
 										get_node_or_null("Spectators/"+str(user_name)).ammo_5 = stream.get_u8()#ammo 5
 										$Team_A.add_child(get_node_or_null("Spectators/"+str(user_name)))
-										if user_name == my_username:
-											var node = get_node_or_null("Main/chat_box/RichTextLabel")
-											node.bbcode_text += '[color=green]'
-											node.bbcode_text += "[SYSTEM]: "
-											node.bbcode_text += 'You joined team A.'
-											node.bbcode_text += '[/color]'
-											node.bbcode_text += '\n'
-										else:
-											var node = get_node_or_null("Main/chat_box/RichTextLabel")
-											node.bbcode_text += '[color=green]'
-											node.bbcode_text += "[SYSTEM]: "
-											node.bbcode_text += str(user_name)+' joined team A.'
-											node.bbcode_text += '[/color]'
-											node.bbcode_text += '\n'
 										$Spectators.remove_child(get_node_or_null("Spectators/"+str(user_name)))
 								else:
 									var other = null
@@ -277,22 +169,10 @@ func _on_data():
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += 'You joined team A.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Other.gd"))
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += str(user_name)+' joined team A.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
 									NAMES[user_name] = false
 									other.timer = game_timer
 									other.game_mode = game_mode
@@ -318,7 +198,6 @@ func _on_data():
 									stream.clear()
 									$Team_A.add_child(other)
 						else:
-						
 							get_node_or_null("Team_A/"+str(user_name)).afk_counter = OS.get_system_time_msecs()
 							get_node_or_null("Team_A/"+str(user_name)).timer = game_timer
 							get_node_or_null("Team_A/"+str(user_name)).game_mode = game_mode
@@ -373,20 +252,6 @@ func _on_data():
 									get_node_or_null("Spectators/"+str(user_name)).ammo_4 = stream.get_u8()#ammo 4
 									get_node_or_null("Spectators/"+str(user_name)).ammo_5 = stream.get_u8()#ammo 5
 									$Team_B.add_child(get_node_or_null("Spectators/"+str(user_name)))
-									if user_name == my_username:
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += 'You joined team B.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
-									else:
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += str(user_name)+' joined team B.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
 									$Spectators.remove_child(get_node_or_null("Spectators/"+str(user_name)))
 								#user was not spectating he joins the team
 								else:
@@ -395,22 +260,10 @@ func _on_data():
 										other = load("res://Me.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Me.gd"))
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += 'You joined team A.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
 									else:
 										other = load("res://Other.tscn").instance()
 										other.name = str(user_name)
 										other.set_script(load("Other.gd"))
-										var node = get_node_or_null("Main/chat_box/RichTextLabel")
-										node.bbcode_text += '[color=green]'
-										node.bbcode_text += "[SYSTEM]: "
-										node.bbcode_text += str(user_name)+' joined team A.'
-										node.bbcode_text += '[/color]'
-										node.bbcode_text += '\n'
 									NAMES[user_name] = false
 									other.timer = game_timer
 									other.game_mode = game_mode
@@ -463,38 +316,10 @@ func _on_data():
 					if get_node_or_null("Team_A/"+str(user_name)):
 						if not get_node_or_null("Spectators/"+str(user_name)):
 							get_node_or_null("Spectators/"+str(user_name)).add_child(get_node_or_null("Team_A/"+str(user_name)))
-							if user_name == my_username.text:
-								var node = get_node_or_null("Main/chat_box/RichTextLabel")
-								node.bbcode_text += '[color=orange]'
-								node.bbcode_text += "[SYSTEM]: "
-								node.bbcode_text += 'You are spectating.'
-								node.bbcode_text += '[/color]'
-								node.bbcode_text += '\n'
-							else:
-								var node = get_node_or_null("Main/chat_box/RichTextLabel")
-								node.bbcode_text += '[color=orange]'
-								node.bbcode_text += "[SYSTEM]: "
-								node.bbcode_text += str(user_name)+'is spectating.'
-								node.bbcode_text += '[/color]'
-								node.bbcode_text += '\n'
 						$Team_A.remove_child(get_node_or_null("Team_A/"+str(user_name)))
 					elif get_node_or_null("Team_B/"+str(user_name)):
 						if not get_node_or_null("Spectators/"+str(user_name)):
 							get_node_or_null("Spectators/"+str(user_name)).add_child(get_node_or_null("Team_B/"+str(user_name)))
-							if user_name == my_username.text:
-								var node = get_node_or_null("Main/chat_box/RichTextLabel")
-								node.bbcode_text += '[color=orange]'
-								node.bbcode_text += "[SYSTEM]: "
-								node.bbcode_text += 'You are spectating.'
-								node.bbcode_text += '[/color]'
-								node.bbcode_text += '\n'
-							else:
-								var node = get_node_or_null("Main/chat_box/RichTextLabel")
-								node.bbcode_text += '[color=orange]'
-								node.bbcode_text += "[SYSTEM]: "
-								node.bbcode_text += str(user_name)+'is spectating.'
-								node.bbcode_text += '[/color]'
-								node.bbcode_text += '\n'
 						$Team_B.remove_child(get_node_or_null("Team_B/"+str(user_name)))
 				stream.clear()
 		#fire
@@ -542,7 +367,6 @@ func _on_data():
 		#first join
 		$Main/in_game_time.visible = true
 		$Main/server_menu.visible = false
-		$Main/chat_box.visible = true
 		$Main/in_game_join_match.visible = true
 		very_first = OS.get_system_time_msecs()
 		if user_name == my_username.text and JOINED_SERVER == 999:
@@ -718,13 +542,8 @@ func _notification(what):
 		set_process(false)
 
 
-func _on_submit_pressed():
-		if my_username.text.length() < 1:
-			$Main/start_menu/VBoxContainer/error_message.text = "username can not be empty"
-		elif my_username.text.length() < 4:
-			$Main/start_menu/VBoxContainer/error_message.text = "username must be longer than 3 characters long"
+func connect_to_server():
 		if not my_username.text == "" and my_username.text.length() > 3 and my_username.text.length() < 24:
-			$Main/start_menu.visible = false
 			_client = WebSocketClient.new()
 			 # Connect base signals to get notified of connection open, close, and errors.
 			_client.connect("connection_closed", self, "_closed")
@@ -734,191 +553,17 @@ func _on_submit_pressed():
 #			_client.trusted_ssl_certificate = ssl
 			var err = _client.connect_to_url(websocket_url)
 			if err != OK:
-				$Main/start_menu.visible = false
 				print("Unable to connect")
 				_client = null
 				set_process(false)
 
-	
-func _on_exit_pressed():
+func exit():
 	_client.disconnect_from_host()
-	$Main/server_menu.show()
 
-func _on_join_pressed():
+func join():
 	test = StreamPeerBuffer.new()
 	test.put_u8(2)
 	test.put_u8(server_idx)
 	test.put_string(my_username.text.strip_edges())
 	_client.get_peer(1).put_packet(test.data_array)
 	test.clear()
-
-
-
-func _on_username_focus_entered():
-	$Main/start_menu/VBoxContainer/error_message.text = ""
-
-
-func server_selected(first,this):
-	var id = this.get_selected_items()[0]+1
-	server_idx = id
-	NAMES = {}
-	$Main/server_menu/VBoxContainer2/HBoxContainer2/VBoxContainer2/join.disabled = false
-	test = StreamPeerBuffer.new()
-	test.put_u8(1)
-	test.put_u8(server_idx)
-	_client.get_peer(1).put_packet(test.data_array)
-	test.clear()
-
-
-func mute_player_select(player,second):
-	var name = second.get_item_text(second.get_selected_items()[0])
-	var splited = name.rsplit(" ", true, 1)
-	if splited[0] in NAMES:
-		if not NAMES[splited[0]]:
-			NAMES[splited[0]] = true
-		else:
-			NAMES[splited[0]] = false
-	$Main/muted_players_menu/VBoxContainer/HBoxContainer3/ScrollContainer/ItemList.clear()
-	for i in NAMES:
-		if i != my_username.text:
-			$Main/muted_players_menu/VBoxContainer/HBoxContainer3/ScrollContainer/ItemList.add_item(str(i)+" "+str(NAMES[i]))
-	second.release_focus()
-	
-
-func _on_reset_pressed():
-		reset_data_to_save = default_data_to_save
-		$Main/game_settings/VBoxContainer/VBoxContainer4/HBoxContainer/HSlider.value = default_data_to_save["mouse_sensitivity"]
-	
-func _on_open_settings_pressed():
-	$Main/in_game_menu.hide()
-	$Main/game_settings.show()
-	
-func _on_return_pressed():
-	reset_data_to_save = null
-	$Main/game_settings.hide()
-	if JOINED_SERVER != 999:
-		$Main/in_game_menu.show()
-	else:
-		$Main/start_menu.show()
-		$Main/server_menu.hide()
-
-
-func _on_save_pressed():
-	var file = File.new()
-	file.open("user://saved_settings.json",File.WRITE)
-	if reset_data_to_save != null:
-		file.store_var(reset_data_to_save)
-	else:
-		file.store_var(data_to_save)
-	file.close()
-	reset_data_to_save = null
-	print("saved ",data_to_save)
-	if $Team_A.get_child_count() > 0:
-		if get_node_or_null("Team_A/"+str(my_username.text)):
-			get_node_or_null("Team_A/"+str(my_username.text)).reload_keys()
-	elif $Team_B.get_child_count() > 0:
-		if get_node_or_null("Team_B/"+str(my_username.text)):
-			get_node_or_null("Team_B/"+str(my_username.text)).reload_keys()
-
-
-func _on_open_muted_players_menu_pressed():
-	$Main/muted_players_menu.show()
-	$Main/in_game_menu.hide()
-	$Main/muted_players_menu/VBoxContainer/ScrollContainer/ItemList.clear()
-	if not $Main/muted_players_menu/VBoxContainer/ScrollContainer/ItemList.is_connected("item_selected",self,"mute_player_select"):
-		$Main/muted_players_menu/VBoxContainer/ScrollContainer/ItemList.connect("item_selected",self,"mute_player_select",[$Main/muted_players_menu/VBoxContainer/ScrollContainer/ItemList])
-	for i in NAMES:
-		if i != my_username.text:
-			$Main/muted_players_menu/VBoxContainer/ScrollContainer/ItemList.add_item(str(i)+" "+str(NAMES[i]))
-
-
-func _on_return_to_in_game_menu_pressed():
-	$Main/muted_players_menu.hide()
-	$Main/in_game_menu.show()
-
-func _on_quit_pressed():
-	if my_username.text !="":
-		test.put_u8(JOINED_SERVER)#code is now server_id
-		test.put_string(my_username.text)
-		test.put_u8(6)#action
-		_client.get_peer(1).put_packet(test.data_array)
-		test.clear()
-		if get_node_or_null("Team_A/"+str(my_username.text)):
-			$Team_A.remove_child(get_node_or_null("Team_A/"+str(my_username.text)))
-		elif get_node_or_null("Team_B/"+str(my_username.text)):
-			$Team_B.remove_child(get_node_or_null("Team_B/"+str(my_username.text)))
-		JOINED_SERVER = 999
-		$Main/in_game_menu.hide()
-		get_node_or_null("Main/chat_box/RichTextLabel").bbcode_text = ""
-		_on_exit_pressed()
-
-
-
-func _on_join_match_pressed():
-		if JOINED_SERVER != 999:
-			$Main/in_game_join_match.hide()
-			if  not get_node_or_null("Team_A/"+str(my_username.text)) and not get_node_or_null("Team_B/"+str(my_username.text)):
-				$Main/in_game_choose_team.show()
-			else:
-				$Main/in_game_time.show()
-
-
-func _on_join_spectate_pressed():
-	if JOINED_SERVER != 999 and team == 0:
-			for name in NAMES:
-				if name != my_username.text:
-					spectator_username = str(name)
-					$Main/in_game_join_match.hide()
-					team = 0
-					break
-			if spectator_username == "":
-				print("no user to spectate")
-
-func _on_spectate_pressed():
-		if spectator_username == "":
-			print("no user to spectate")
-		else:
-			if get_node_or_null("Team_A/"+str(my_username.text)):
-					team = 0
-					get_node_or_null("Team_A/"+str(my_username.text)).health = 0
-					get_node_or_null("Team_A/"+str(my_username.text)).team = 0
-					$Spectators.add_child(get_node_or_null("Team_A/"+str(my_username.text)))
-					$Team_A.remove_child(get_node_or_null("Team_A/"+str(my_username.text)))
-			elif get_node_or_null("Team_B/"+str(my_username.text)):
-					team = 0
-					get_node_or_null("Team_B/"+str(my_username.text)).health = 0
-					get_node_or_null("Team_B/"+str(my_username.text)).team = 0
-					$Spectators.add_child(get_node_or_null("Team_B/"+str(my_username.text)))
-					$Team_B.remove_child(get_node_or_null("Team_B/"+str(my_username.text)))
-			$Main/in_game_menu.hide()
-			$Main/chat_box.hide()
-			$Main/in_game_join_match.show()
-
-
-func _on_team_a_pressed():
-	if $Team_A.get_child_count() <= $Team_B.get_child_count():
-		team = 1
-		$Main/in_game_choose_team.hide()
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-func _on_team_b_pressed():
-	if $Team_B.get_child_count() <= $Team_A.get_child_count():
-		team = 2
-		$Main/in_game_choose_team.hide()
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-
-func _on_join_other_team_pressed():
-	if  get_node_or_null("Team_A/"+str(my_username.text)) and $Team_A.get_child_count() <= $Team_B.get_child_count():
-		team = 2
-		$Team_A.remove_child(get_node_or_null("Team_A/"+str(my_username.text)))
-		$Main/in_game_menu.hide()
-		$Main/in_game_choose_team.show()
-	elif  get_node_or_null("Team_B/"+str(my_username.text)) and $Team_B.get_child_count() <= $Team_A.get_child_count():
-		team = 1
-		$Team_B.remove_child(get_node_or_null("Team_B/"+str(my_username.text)))
-		$Main/in_game_menu.hide()
-		$Main/in_game_choose_team.show()
-	else:
-		$Main/in_game_menu.hide()
-		$Main/in_game_choose_team.show()
