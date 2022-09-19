@@ -8,6 +8,7 @@ func _ready():
 	udp.connect_to_host("91.162.161.207", 32902)
 
 func _process(delta):
+	print(connected)
 	if !connected:
 		# Try to contact server
 		udp.put_packet("The answer is... 42!".to_utf8())
